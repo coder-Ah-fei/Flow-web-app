@@ -1,54 +1,60 @@
 <template>
-  <view class="wrap">
+	<view class="wrap">
+		<view v-for="item in bannerList">
+			{{item.pic_url}}
+		</view>
 		<swiper>
-			<swiper-item v-for="item in list">
-				<image :src="item.image"></image>
+			<swiper-item v-for="item in bannerList">
+				<image :src="showPic + item.pic_url"></image>
 			</swiper-item>
 		</swiper>
-  </view>
+	</view>
 </template>
 
 <script>
-export default {
-  data() {
-    return {
-      list: [
-        {
-          image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-          title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-        },
-        {
-          image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-          title: '身无彩凤双飞翼，心有灵犀一点通'
-        },
-        {
-          image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-          title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-        }
-      ],
-    }
-  },
-  created(){
-  },
-  methods: {
-	  
-	  listBannersFun(){
-		  uni.request({
-		      url: 'http://tong.tailihome.com/phone/mobile/index/getBannerData?method=index', //仅为示例，并非真实接口地址。
-		      data: {
-		          aDlinkType: 'wechat_banner'
-		      },
-		      header: {
-		          'custom-header': 'hello' //自定义请求头信息
-		      },
-		      success: (res) => {
-		          console.log(res.data);
-		      }
-		  });
-	  },
-	  
-  }
-}
+	import {
+		http
+	} from '@/common/http';
+
+	export default {
+		data() {
+			return {
+				showPic: 'http://192.168.101.18:8081/mobile/showPic/',
+				bannerList: [],
+				list: [{
+						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
+						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
+					},
+					{
+						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
+						title: '身无彩凤双飞翼，心有灵犀一点通'
+					},
+					{
+						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
+						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
+					}
+				],
+			}
+		},
+		created() {
+
+		},
+		mounted() {
+			this.listBannersFun();
+		},
+		methods: {
+			listBannersFun() {
+				let that = this;
+				http.post('http://192.168.101.18:8081/phone/mobile/index/getBannerData?method=index', {
+					aDlinkType: 'wechat_banner'
+				}).then(res => {
+					console.info(res)
+					this.bannerList = res.data.banner_list;
+				})
+			},
+
+		}
+	}
 </script>
 
 <style>
