@@ -1,13 +1,38 @@
 <template>
 	<view class="wrap">
-		<view v-for="item in bannerList">
-			{{item.pic_url}}
-		</view>
 		<swiper>
 			<swiper-item v-for="item in bannerList">
 				<image :src="showPic + item.pic_url"></image>
 			</swiper-item>
 		</swiper>
+		<!-- 一般用法 -->
+		<swiper>
+			<swiper-item v-for="item in homePageshoppingClassList">
+				<!-- 不带边框并矩形显示 -->
+				<uni-grid :column="5" :showBorder="false" :square="false">
+					<uni-grid-item v-for="list in item" style="padding: 15rpx;">
+						<view>
+							<image style="width: 80%; height: 110rpx;" :src="showPic + list.resourceSmallId"></image>
+							<text class="text" style="font-size: 30rpx; padding-top: 15rpx;">{{list.classNameStr}}</text>
+						</view>
+					</uni-grid-item>
+				</uni-grid>
+			</swiper-item>
+		</swiper>
+		<view>
+			<uni-segmented-control :current="0" :values="items" @clickItem="onClickItem" styleType="button" activeColor="#4cd964"></uni-segmented-control>
+			<view class="content">
+				<view v-show="current === 0">
+					选项卡1的内容
+				</view>
+				<view v-show="current === 1">
+					选项卡2的内容
+				</view>
+				<view v-show="current === 2">
+					选项卡3的内容
+				</view>
+			</view>
+		</view>
 	</view>
 </template>
 
@@ -19,37 +44,41 @@
 	export default {
 		data() {
 			return {
-				showPic: 'http://192.168.101.18:8081/mobile/showPic/',
+				showPic: http.url.showPic,
 				bannerList: [],
-				list: [{
-						image: 'https://cdn.uviewui.com/uview/swiper/1.jpg',
-						title: '昨夜星辰昨夜风，画楼西畔桂堂东'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/2.jpg',
-						title: '身无彩凤双飞翼，心有灵犀一点通'
-					},
-					{
-						image: 'https://cdn.uviewui.com/uview/swiper/3.jpg',
-						title: '谁念西风独自凉，萧萧黄叶闭疏窗，沉思往事立残阳'
-					}
+				homePageshoppingClassList: [],
+				items:[
+					"a",
+					"a",
+					"a",
 				],
 			}
 		},
 		created() {
-
+			this.listBannersFun();
+			this.listHomePageShoppingClassesFun();
 		},
 		mounted() {
-			this.listBannersFun();
+
 		},
 		methods: {
 			listBannersFun() {
 				let that = this;
-				http.post('http://192.168.101.18:8081/phone/mobile/index/getBannerData?method=index', {
+				http.post(http.url.getBannerData, {
 					aDlinkType: 'wechat_banner'
 				}).then(res => {
 					console.info(res)
 					this.bannerList = res.data.banner_list;
+				})
+			},
+			listHomePageShoppingClassesFun() {
+				let that = this;
+				http.post(http.url.listHomePageShoppingClasses).then(res => {
+					if (res.data.code == 0) {
+
+						that.homePageshoppingClassList = res.data.list;
+						console.info(that.homePageshoppingClassList)
+					}
 				})
 			},
 

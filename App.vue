@@ -4,6 +4,13 @@
 			console.log('App Launch')
 		},
 		onShow: function() {
+			let userId = uni.getStorageSync('userId');
+			if (!userId) {
+				uni.switchTab({
+					url: '/pages/login/login'
+				});
+			}
+			console.log(userId)
 			console.log('App Show')
 		},
 		onHide: function() {
